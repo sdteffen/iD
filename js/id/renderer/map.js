@@ -96,11 +96,15 @@ iD.Map = function() {
         }
 
         surface
-            .call(iD.svg.Points(),    graph, all, filter, projection)
-            .call(iD.svg.Vertices(),  graph, all, filter, projection)
             .call(iD.svg.Lines(),     graph, all, filter, projection)
-            .call(iD.svg.Areas(),     graph, all, filter, projection)
-            .call(iD.svg.Midpoints(), graph, all, filter, projection);
+            .call(iD.svg.Areas(),     graph, all, filter, projection);
+
+        if (all.length < 1000) {
+            surface
+                .call(iD.svg.Points(),    graph, all, filter, projection)
+                .call(iD.svg.Vertices(),  graph, all, filter, projection)
+                .call(iD.svg.Midpoints(), graph, all, filter, projection);
+        }
     }
 
     function editOff() {
