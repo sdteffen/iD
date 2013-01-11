@@ -81,6 +81,33 @@ iD.Connection = function() {
         return iD.Entity(o);
     }
 
+    function fastObjectData(obj) {
+        var o = {
+            type: obj.nodeName,
+            members: getMembers(obj),
+            nodes: getNodes(obj),
+            tags: getTags(obj)
+        };
+        for (var i = 0, l = obj.attributes.length; i < l; i++) {
+            o[obj.attributes[i].nodeName] = obj.attributes[i].nodeValue;
+        }
+        if (o.lon && o.lat) {
+            o.loc = [parseFloat(o.lon), parseFloat(o.lat)];
+            delete o.lon;
+            delete o.lat;
+        }
+        o.id = iD.Entity.id.fromOSM(o.type, o.id);
+        switch (o.type) {
+            case 'node':
+                o._poi = !refNodes[o.id];
+                return new iD.Node(o);
+            case 'relation':
+                return new iD.Relation(o);
+            case 'way':
+                return new iD.Way(o);
+        }
+    }
+
     function parse(dom) {
         if (!dom || !dom.childNodes) return new Error('Bad request');
         var root = dom.childNodes[0];
@@ -119,6 +146,64 @@ iD.Connection = function() {
         _.forEach(root.getElementsByTagName('way'), addEntity);
         _.forEach(root.getElementsByTagName('node'), addEntity);
         _.forEach(root.getElementsByTagName('relation'), addEntity);
+
+        var g = iD.Graph(entities);
+
+        for (var i in wparentsOf) {
+            if (entities[i]) g.transient(entities[i],
+                'parentWays', d3.functor(wparentsOf[i]));
+        }
+
+        for (i in rparentsOf) {
+            if (entities[i]) g.transient(entities[i],
+                'parentRelations', d3.functor(rparentsOf[i]));
+        }
+
+        return g;
+    }
+
+    function fastParse(dom) {
+        if (!dom || !dom.childNodes) return new Error('Bad request');
+        var root = dom.childNodes[0];
+        var entities = {};
+        refNodes = {};
+        var rparentsOf = {},
+            wparentsOf = {};
+
+        var groups = [
+            root.getElementsByTagName('way'),
+            root.getElementsByTagName('node'),
+            root.getElementsByTagName('relation')];
+        for (var e = 0; e < 3; e++) {
+            for (var j = 0, l = groups[e].length; j < l; j++) {
+                var obj = groups[e][j];
+                var o = fastObjectData(obj);
+                entities[o.id] = o;
+
+                var i;
+                if (o.type === 'relation') {
+                    for (i = 0; i < o.members.length; i++) {
+                        if (o.members[i].id) {
+                            if (rparentsOf[o.members[i].id] === undefined) {
+                                rparentsOf[o.members[i].id] = [];
+                            }
+                            rparentsOf[o.members[i].id].push(o.id);
+                        }
+                    }
+                }
+
+                if (o.type === 'way') {
+                    for (i = 0; i < o.nodes.length; i++) {
+                        if (o.nodes[i]) {
+                            if (wparentsOf[o.nodes[i]] === undefined) {
+                                wparentsOf[o.nodes[i]] = [];
+                            }
+                            wparentsOf[o.nodes[i]].push(o.id);
+                        }
+                    }
+                }
+            }
+        }
 
         var g = iD.Graph(entities);
 
@@ -268,6 +353,8 @@ iD.Connection = function() {
     connection.userDetails = userDetails;
     connection.authenticated = authenticated;
     connection.objectData = objectData;
+    connection.parse = parse;
+    connection.fastParse = fastParse;
 
     return d3.rebind(connection, event, 'on');
 };
