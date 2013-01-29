@@ -11,7 +11,7 @@ iD.ui.confirm = function() {
         .on('click.confirm', function() {
             modal.remove();
         });
-        nochanges.append('span').attr('class','label').text('Okay');
+        nochanges.append('span').attr('class','label').text(window.i18n.id.okay());
 
     return modal;
 };

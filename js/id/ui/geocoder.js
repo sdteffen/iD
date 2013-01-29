@@ -43,7 +43,7 @@ iD.ui.geocoder = function() {
 
         var button = selection.append('button')
             .attr('tabindex', -1)
-            .attr('title', 'Find A Location')
+            .attr('title', window.i18n.id.find_location())
             .html('<span class=\'geocode icon\'></span>')
             .on('click', toggle);
 
@@ -51,7 +51,7 @@ iD.ui.geocoder = function() {
 
         gcForm.attr('class','content fillD map-overlay hide')
             .append('input')
-                .attr({ type: 'text', placeholder: 'find a place' })
+                .attr({ type: 'text', placeholder: window.i18n.id.find_placeholder() })
                 .on('keydown', keydown);
 
         selection.call(clickoutside);

@@ -51,6 +51,7 @@ all: \
 
 iD.js: Makefile
 	@rm -f $@
+	messageformat -l en locale/en -o locale/en/i18n.js
 	cat $(filter %.js,$^) > $@
 
 %.min.js: %.js Makefile

@@ -2,7 +2,7 @@ iD.modes.AddLine = function() {
     var mode = {
         id: 'add-line',
         button: 'line',
-        title: 'Line',
+        title: 'line',
         description: 'Lines can be highways, streets, pedestrian paths, or even canals.',
         key: 'l'
     };

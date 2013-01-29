@@ -14,9 +14,7 @@ window.iD = function(container) {
 
     function editor(container) {
         if (!iD.supported()) {
-            container.html('This editor is supported in Firefox, Chrome, Safari, Opera, ' +
-                      'and Internet Explorer 9 and above. Please upgrade your browser ' +
-                      'or use Potlatch 2 to edit the map.')
+            container.html(window.i18n.id.browser_notice())
                 .style('text-align:center;font-style:italic;');
             return;
         }
@@ -44,11 +42,11 @@ window.iD = function(container) {
             .enter().append('button')
                 .attr('tabindex', -1)
                 .attr('class', function (mode) { return mode.title + ' add-button col3'; })
-            .attr('data-original-title', function (mode) {
-                return hintprefix(mode.key, mode.description);
-            })
-            .call(bootstrap.tooltip().placement('bottom').html(true))
-            .on('click.editor', function (mode) { controller.enter(mode); });
+                .attr('data-original-title', function (mode) {
+                    return hintprefix(mode.key, mode.description);
+                })
+                .call(bootstrap.tooltip().placement('bottom').html(true))
+                .on('click.editor', function (mode) { controller.enter(mode); });
 
         function disableTooHigh() {
             if (map.editable()) {
@@ -75,7 +73,8 @@ window.iD = function(container) {
                 return d.id + ' icon icon-pre-text';
             });
 
-        buttons.append('span').attr('class', 'label').text(function (mode) { return mode.title; });
+        buttons.append('span').attr('class', 'label')
+            .text(function (mode) { return window.i18n.id[mode.title](); });
 
         controller.on('enter.editor', function (entered) {
             buttons.classed('active', function (mode) { return entered.button === mode.button; });
@@ -111,12 +110,12 @@ window.iD = function(container) {
         var zoom = container.append('div')
             .attr('class', 'zoombuttons map-control')
             .selectAll('button')
-                .data([['zoom-in', '+', map.zoomIn, 'Zoom In'], ['zoom-out', '-', map.zoomOut, 'Zoom Out']])
+                .data([['zoom-in', '+', map.zoomIn], ['zoom-out', '-', map.zoomOut]])
                 .enter()
                 .append('button')
                 .attr('tabindex', -1)
                 .attr('class', function(d) { return d[0]; })
-                .attr('title', function(d) { return d[3]; })
+                .attr('title', function(d) { return window.i18n.id[d[0]](); })
                 .on('click.editor', function(d) { return d[2](); })
                 .append('span')
                     .attr('class', function(d) {
