@@ -50,7 +50,7 @@ iD.behavior.Draw = function(context) {
     function click() {
         var d = datum();
         if (d.type === 'way') {
-            var choice = iD.geo.chooseIndex(d, d3.mouse(context.surface().node()), context);
+            var choice = iD.geo.chooseEdge(context.childNodes(d), d3.mouse(context.surface().node()), context.projection);
             event.clickWay(d, choice.loc, choice.index);
 
         } else if (d.type === 'node') {

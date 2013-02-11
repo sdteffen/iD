@@ -87,9 +87,9 @@ iD.behavior.DragNode = function(context) {
             loc = d.loc;
         } else if (d.type === 'way') {
             var point = d3.mouse(context.surface().node()),
-                index = iD.geo.chooseIndex(d, point, context);
-            if (iD.geo.dist(point, context.projection(index.loc)) < 10) {
-                loc = index.loc;
+                choice = iD.geo.chooseEdge(context.childNodes(d), point, context.projection);
+            if (choice.distance < 10) {
+                loc = choice.loc;
             }
         }
 
@@ -102,8 +102,8 @@ iD.behavior.DragNode = function(context) {
         var d = datum();
         if (d.type === 'way') {
             var point = d3.mouse(context.surface().node()),
-                choice = iD.geo.chooseIndex(d, point, context);
-            if (iD.geo.dist(point, context.projection(choice.loc)) < 10) {
+                choice = iD.geo.chooseEdge(context.childNodes(d), point, context.projection);
+            if (choice.distance < 10) {
                 context.replace(
                     iD.actions.MoveNode(entity.id, choice.loc),
                     iD.actions.AddVertex(d.id, entity.id, choice.index),
