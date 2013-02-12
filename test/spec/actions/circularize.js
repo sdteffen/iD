@@ -26,7 +26,7 @@ describe("iD.actions.Circularize", function () {
 
         graph = iD.actions.Circularize('-', projection)(graph);
 
-        expect(graph.entity('-').nodes.slice(0, 4)).to.eql(['c', 'b', 'a', 'd']);
+        expect(graph.entity('-').nodes.slice(0, 4)).to.eql(['b', 'c', 'a', 'd']);
     });
 
     it("deletes unused nodes that are not members of other ways", function () {
@@ -56,6 +56,6 @@ describe("iD.actions.Circularize", function () {
         graph = iD.actions.Circularize('-', projection, 3)(graph);
 
         expect(graph.entity('d')).to.be.undefined;
-        expect(graph.entity('=').nodes).to.eql(['c']);
+        expect(graph.entity('=').nodes).to.eql(['b']);
     });
 });
