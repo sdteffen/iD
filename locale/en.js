@@ -118,6 +118,15 @@ locale.en = {
                 area: "Moved an area."
             }
         },
+        improve: {
+            title: "Improve",
+            description: "Improve the accuracy of this way.",
+            key: "I",
+            annotation: {
+                line: "Improved a line.",
+                area: "Improved an area."
+            }
+        },
         reverse: {
             title: "Reverse",
             description: "Make this line go in the opposite direction.",
